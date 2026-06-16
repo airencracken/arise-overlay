@@ -34,6 +34,7 @@ QA_FLAGS_IGNORED="usr/bin/arise"
 
 src_compile() {
 	CGO_ENABLED=0 go build \
+		-mod=vendor \
 		-trimpath \
 		-ldflags="-s -w -X main.version=${PV}" \
 		-o arise \
