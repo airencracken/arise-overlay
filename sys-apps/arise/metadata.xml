@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>airencracken@users.noreply.github.com</email>
+		<name>Airen Cracken</name>
+	</maintainer>
+	<use>
+		<flag name="info">Build and install the GNU Info manual.</flag>
+		<flag name="rsync">Install <pkg>net-misc/rsync</pkg> for synchronizing repositories over the rsync transport.</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">airencracken/arise</remote-id>
+	</upstream>
+</pkgmetadata>

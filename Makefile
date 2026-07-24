@@ -1,42 +1,50 @@
-VERSION ?= 0.1.0
-OWNER   ?= airencracken
+VERSION ?= 0.0.1
 REPO    ?= arise
-GITHUB  ?= https://github.com
-SRC_URI ?= $(GITHUB)/$(OWNER)/$(REPO)/archive/v$(VERSION).tar.gz
+DISTDIR ?= /tmp/arise-overlay-distfiles
 
-.PHONY: manifest release clean
+.PHONY: manifest release clean check check-go-version local-prepare local-build local-install local-clean
+
+ARISE_SOURCE_DIR ?= $(abspath ../arise)
+
+check:
+	./scripts/check-overlay.sh
+
+check-go-version:
+	@GO_VERSION=$$(awk '$$1 == "go" { print $$2; exit }' "$(ARISE_SOURCE_DIR)/go.mod"); \
+	grep -q ">=dev-lang/go-$$GO_VERSION" sys-apps/arise/arise-9999.ebuild || { \
+		echo "Go version mismatch: go.mod requires $$GO_VERSION; update arise-9999.ebuild BDEPEND"; \
+		exit 1; \
+	}
+
+local-prepare: check-go-version
+	ARISE_SOURCE_DIR="$(ARISE_SOURCE_DIR)" ./scripts/local-portage.sh prepare
+
+local-build: check-go-version
+	ARISE_SOURCE_DIR="$(ARISE_SOURCE_DIR)" ./scripts/local-portage.sh build
+
+local-install: check-go-version
+	ARISE_SOURCE_DIR="$(ARISE_SOURCE_DIR)" ./scripts/local-portage.sh install
+
+local-clean:
+	./scripts/local-portage.sh clean
 
 manifest:
-	@echo "Fetching $(SRC_URI)..."
-	@curl -sL '$(SRC_URI)' -o /tmp/arise-$(VERSION).tar.gz || \
-		{ echo "Failed to download tarball. Is v$(VERSION) tagged?"; exit 1; }
-	@echo "Computing checksums..."
-	@SIZE=$$(stat -c %s /tmp/arise-$(VERSION).tar.gz); \
-	 SHA256=$$(sha256sum /tmp/arise-$(VERSION).tar.gz | cut -d' ' -f1); \
-	 SHA512=$$(sha512sum /tmp/arise-$(VERSION).tar.gz | cut -d' ' -f1); \
-	 BLAKE2B=$$(b2sum /tmp/arise-$(VERSION).tar.gz | cut -d' ' -f1); \
-	 EB_256=$$(sha256sum sys-apps/$(REPO)/arise-$(VERSION).ebuild | cut -d' ' -f1); \
-	 EB_512=$$(sha512sum sys-apps/$(REPO)/arise-$(VERSION).ebuild | cut -d' ' -f1); \
-	 EB_B2=$$(b2sum sys-apps/$(REPO)/arise-$(VERSION).ebuild | cut -d' ' -f1); \
-	 EB_SZ=$$(stat -c %s sys-apps/$(REPO)/arise-$(VERSION).ebuild); \
-	 LIVE_256=$$(sha256sum sys-apps/$(REPO)/arise-9999.ebuild | cut -d' ' -f1); \
-	 LIVE_512=$$(sha512sum sys-apps/$(REPO)/arise-9999.ebuild | cut -d' ' -f1); \
-	 LIVE_B2=$$(b2sum sys-apps/$(REPO)/arise-9999.ebuild | cut -d' ' -f1); \
-	 LIVE_SZ=$$(stat -c %s sys-apps/$(REPO)/arise-9999.ebuild); \
-	 echo "DIST arise-$(VERSION).tar.gz $$SIZE BLAKE2B $$BLAKE2B SHA512 $$SHA512 SHA256 $$SHA256" > sys-apps/$(REPO)/Manifest; \
-	 echo "EBUILD arise-$(VERSION).ebuild $$EB_SZ BLAKE2B $$EB_B2 SHA512 $$EB_512 SHA256 $$EB_256" >> sys-apps/$(REPO)/Manifest; \
-	 echo "EBUILD arise-9999.ebuild $$LIVE_SZ BLAKE2B $$LIVE_B2 SHA512 $$LIVE_512 SHA256 $$LIVE_256" >> sys-apps/$(REPO)/Manifest
-	@echo "Manifest updated."
-	@rm -f /tmp/arise-$(VERSION).tar.gz
+	@test -f sys-apps/$(REPO)/arise-$(VERSION).ebuild || { \
+		echo "Missing sys-apps/$(REPO)/arise-$(VERSION).ebuild"; exit 1; }
+	mkdir -p "$(DISTDIR)"
+	DISTDIR="$(DISTDIR)" ebuild \
+		sys-apps/$(REPO)/arise-$(VERSION).ebuild manifest
+	@echo "Manifest updated through Portage."
 
 release: manifest
 	@echo "Ready to release arise v$(VERSION)"
 	@echo "  1. git add sys-apps/$(REPO)/Manifest sys-apps/$(REPO)/arise-$(VERSION).ebuild"
 	@echo "  2. git commit -m 'release v$(VERSION)'"
 	@echo "  3. git push"
-	@echo ""
-	@echo "In the main arise repo:"
-	@echo "  git tag v$(VERSION) && git push --tags"
 
 clean:
-	rm -f /tmp/arise-*.tar.gz
+	@case "$(notdir $(DISTDIR))" in \
+		arise-overlay-distfiles*) ;; \
+		*) echo "Refusing to clean non-Arise DISTDIR=$(DISTDIR)"; exit 1 ;; \
+	esac
+	rm -rf -- "$(DISTDIR)"
