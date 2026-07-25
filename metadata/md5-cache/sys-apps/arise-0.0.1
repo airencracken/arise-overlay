@@ -1,0 +1,13 @@
+BDEPEND=>=dev-lang/go-1.26.3 sys-apps/file info? ( sys-apps/texinfo )
+DEFINED_PHASES=compile install postinst test
+DESCRIPTION=Experimental high-performance, recovery-oriented package manager for Gentoo
+EAPI=8
+HOMEPAGE=https://github.com/airencracken/arise
+INHERITED=bash-completion-r1 go-module
+IUSE=info rsync test
+KEYWORDS=~amd64
+LICENSE=GPL-3 Apache-2.0 BSD BSD-2 BSD-3 MIT MPL-2.0
+RDEPEND=app-arch/bzip2 app-arch/tar app-arch/xz-utils app-shells/bash rsync? ( net-misc/rsync ) sys-apps/portage sys-apps/sandbox sys-apps/util-linux
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=https://github.com/airencracken/arise/archive/v0.0.1.tar.gz -> arise-0.0.1.tar.gz https://github.com/airencracken/arise/releases/download/v0.0.1/arise-0.0.1-deps.tar.xz
