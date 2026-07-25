@@ -39,11 +39,16 @@ Arise remains experimental and the versioned release is testing-keyworded for
 ## USE flags
 
 - `info`: build and install the GNU Info manual where the release supports it;
+- `pie`: build a position-independent executable instead of the default
+  standalone recovery binary.
 - `rsync`: install the optional rsync repository transport.
 - `test`: run the upstream non-live test suite.
 
-The supported binary is always statically linked. The man page and Bash
-completion are always installed.
+The default binary is statically linked. The ebuild explicitly selects Go's
+executable build mode instead of Gentoo's normal PIE default, keeping the Arise
+recovery control plane independent of the host dynamic loader and
+shared-library state. Users who prefer Gentoo's normal hardening tradeoff can
+enable `pie`. The man page and Bash completion are always installed.
 
 See `USE_FLAGS.md` for the longer-term capability policy.
 Core archive formats currently use the system `tar`, `xz`, and `bzip2` tools;

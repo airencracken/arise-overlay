@@ -7,13 +7,18 @@ belong in the ebuild's USE surface.
 ## Current flags
 
 - `info`: build and install the GNU Info manual.
+- `pie`: build a position-independent executable instead of the default
+  standalone recovery binary.
 - `rsync`: install `net-misc/rsync` for rsync repository transport.
 - `test`: run the upstream unit, adversarial, and non-live integration suite
   through Portage's standard test phase.
 
-The supported Arise build is always a verified `CGO_ENABLED=0` static binary;
-this recovery property is not optional and therefore is not a USE flag. The
-`arise(1)` manual page and Bash completion are also baseline package contents.
+The default Arise build is a verified `CGO_ENABLED=0` static binary. The ebuild
+overrides Gentoo's normal PIE default with Go's executable build mode so the
+recovery control plane does not depend on the host dynamic loader or
+shared-library state. PIE remains a good general hardening default and is
+available through the explicit `pie` tradeoff. The `arise(1)` manual page and
+Bash completion are baseline package contents.
 
 ## Planned capability flags
 
@@ -51,8 +56,8 @@ The standard `test` flag should control the upstream test suite through
 ## Deliberate non-flags
 
 - `man`: the primary manual page is baseline package documentation.
-- `static`: the standalone recovery build is baseline behavior, not an optional
-  capability.
+- `static`: the standalone recovery build is the default; `pie` names the
+  opt-in behavior that changes it.
 - `git`: Arise has a built-in Git implementation; the external executable is
   an optimization rather than a required feature.
 - `python` and `perl`: audit commands should detect optional host runtimes and

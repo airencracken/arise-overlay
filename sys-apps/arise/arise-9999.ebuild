@@ -21,7 +21,7 @@ fi
 
 LICENSE="GPL-3 Apache-2.0 BSD BSD-2 BSD-3 MIT MPL-2.0"
 SLOT="0"
-IUSE="info rsync test"
+IUSE="info pie rsync test"
 
 RDEPEND="
 	app-arch/bzip2
@@ -51,15 +51,26 @@ src_unpack() {
 }
 
 src_compile() {
+	local buildmode=exe
+	local linkage
+	use pie && buildmode=pie
+
 	CGO_ENABLED=0 ego build \
+		-buildmode="${buildmode}" \
 		-buildvcs=false \
 		-trimpath \
 		-ldflags="-X main.version=${PV}" \
 		-o arise \
 		./cmd/arise/
 
-	file arise | grep -q 'statically linked' ||
-		die "supported build must produce a statically linked binary"
+	linkage=$(file arise) || die "could not inspect built binary"
+	if use pie; then
+		[[ ${linkage} == *"pie executable"* ]] ||
+			die "pie build must produce a PIE executable: ${linkage}"
+	else
+		[[ ${linkage} == *"statically linked"* ]] ||
+			die "recovery build must produce a statically linked executable: ${linkage}"
+	fi
 
 	if use info; then
 		texi2any --info arise.texi -o arise.info ||
