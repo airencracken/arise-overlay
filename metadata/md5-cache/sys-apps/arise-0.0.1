@@ -1,14 +1,15 @@
-BDEPEND=>=dev-lang/go-1.26.3 sys-apps/file info? ( sys-apps/texinfo )
-DEFINED_PHASES=compile install postinst test
+BDEPEND=>=dev-lang/go-1.26.3 sys-apps/file info? ( sys-apps/texinfo ) >=dev-lang/go-1.24.11:= app-arch/unzip
+DEFINED_PHASES=compile install postinst test unpack
 DESCRIPTION=Experimental high-performance, recovery-oriented package manager for Gentoo
 EAPI=8
 HOMEPAGE=https://github.com/airencracken/arise
-INHERITED=bash-completion-r1 go-module
+INHERIT=bash-completion-r1 go-module
 IUSE=info pie rsync test
 KEYWORDS=~amd64
 LICENSE=GPL-3 Apache-2.0 BSD BSD-2 BSD-3 MIT MPL-2.0
 RDEPEND=app-arch/bzip2 app-arch/tar app-arch/xz-utils app-shells/bash rsync? ( net-misc/rsync ) sys-apps/portage sys-apps/sandbox sys-apps/util-linux
 RESTRICT=!test? ( test )
 SLOT=0
-SRC_URI=https://github.com/airencracken/arise/archive/a9a52d0cc363b55f4f63cbf0fb26ae9706a382a6.tar.gz -> arise-0.0.1.tar.gz https://github.com/airencracken/arise/releases/download/v0.0.1/arise-0.0.1-deps.tar.xz
-_md5_=e8c8968e6c82857d034f3ad180fd499c
+SRC_URI=https://github.com/airencracken/arise/archive/d8cab710ab5932c4a38d24ff93aaffd7dc7f20da.tar.gz -> arise-0.0.1.tar.gz https://github.com/airencracken/arise/releases/download/v0.0.1/arise-0.0.1-deps.tar.xz
+_eclasses_=bash-completion-r1	4386cfb12ede6cd8f0c1987d2e88da5f	flag-o-matic	fd3558f73f6503093adee69adf41020d	go-env	fca4e820393c2eac25a944be8bdf6a3a	go-module	3d4b6f3f29b3ebdeb708785b3cb1743b	multiprocessing	45d0620f25c2f063ad6276ecd9ed9399	shell-completion	63a62de3ca49c798ee6e89f190e45d0e	sysroot	4c36abaf94ebd3ab32f8abea9a444121	toolchain-funcs	58a918e3a42d0156f010dcfd43725be5
+_md5_=ca7e756b12e66a407ad5cb5134df378e
