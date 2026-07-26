@@ -7,10 +7,12 @@ inherit bash-completion-r1 go-module
 
 DESCRIPTION="Experimental high-performance, recovery-oriented package manager for Gentoo"
 HOMEPAGE="https://github.com/airencracken/arise"
+ARISE_COMMIT="7b44df01cbe0082ddfd560beb8788fcadf885033"
 SRC_URI="
+	https://github.com/airencracken/arise/archive/${ARISE_COMMIT}.tar.gz -> ${P}.tar.gz
 	https://github.com/airencracken/arise/releases/download/v${PV}/${P}-deps.tar.xz
 "
-S="/home/marcus/projects/arise-worktrees/test-coverage"
+S="${WORKDIR}/arise-${ARISE_COMMIT}"
 
 LICENSE="GPL-3 Apache-2.0 BSD BSD-2 BSD-3 MIT MPL-2.0"
 SLOT="0"
@@ -45,10 +47,10 @@ src_compile() {
 		-buildvcs=false \
 		-trimpath \
 		-ldflags="-X main.version=${PV}" \
-		-o "${T}/arise" \
+		-o arise \
 		./cmd/arise/
 
-	linkage=$(file "${T}/arise") || die "could not inspect built binary"
+	linkage=$(file arise) || die "could not inspect built binary"
 	if use pie; then
 		[[ ${linkage} == *"pie executable"* ]] ||
 			die "pie build must produce a PIE executable: ${linkage}"
@@ -68,7 +70,7 @@ src_test() {
 }
 
 src_install() {
-	dobin "${T}/arise"
+	dobin arise
 	doman arise.1
 	use info && doinfo arise.info
 	dodoc README.md LICENSE
