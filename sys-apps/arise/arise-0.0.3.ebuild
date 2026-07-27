@@ -7,10 +7,12 @@ inherit bash-completion-r1 go-module
 
 DESCRIPTION="Experimental high-performance, recovery-oriented package manager for Gentoo"
 HOMEPAGE="https://github.com/airencracken/arise"
+ARISE_COMMIT="5387ab9d6c07e143f1df719e983abaf02aea367f"
 SRC_URI="
-	https://github.com/airencracken/arise/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	https://github.com/airencracken/arise/archive/${ARISE_COMMIT}.tar.gz -> ${P}.tar.gz
 	https://github.com/airencracken/arise/releases/download/v${PV}/${P}-deps.tar.xz
 "
+S="${WORKDIR}/arise-${ARISE_COMMIT}"
 
 LICENSE="GPL-3 Apache-2.0 BSD BSD-2 BSD-3 MIT MPL-2.0"
 SLOT="0"

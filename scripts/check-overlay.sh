@@ -59,7 +59,7 @@ else
 fi
 
 if grep -R -n -E '/home/[^/]+|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY|github_pat_|ghp_' \
-	"$overlay_dir" --exclude-dir=.git --exclude=check-overlay.sh; then
+	"$overlay_dir" --exclude-dir=.git --exclude=.git --exclude=check-overlay.sh; then
 	overlay_error "overlay contains a host path or credential-like text"
 	status=1
 fi
