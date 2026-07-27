@@ -67,6 +67,18 @@ make local-build ARISE_SOURCE_DIR=/path/to/arise
 state without merging it. `make local-install` is the explicit live-system
 mutation step. See `LOCAL_DEVELOPMENT.md`.
 
+After publishing an immutable source release, prepare its overlay entry with
+the full tagged commit:
+
+```bash
+scripts/prepare-release.sh 0.0.4 5a9f219403533bd43146dbecaf4dafa9edd52f3e
+```
+
+The script validates its inputs, atomically creates the pinned ebuild from the
+latest stable ebuild, updates the Makefile default, regenerates the Manifest
+and metadata cache, and runs overlay QA. Use `--prepare-only` as the third
+argument only when intentionally deferring derived metadata generation.
+
 Release order:
 
 1. test, tag, and publish the corresponding Arise source release;
