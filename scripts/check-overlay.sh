@@ -25,6 +25,15 @@ while IFS= read -r ebuild_file; do
 	if ! bash -n "$ebuild_file"; then
 		status=1
 	fi
+	relative=${ebuild_file#"$overlay_dir/"}
+	category=${relative%%/*}
+	cache_relative=$category/${relative##*/}
+	cache_relative=${cache_relative%.ebuild}
+	cache_file=$overlay_dir/metadata/md5-cache/$cache_relative
+	if [[ ! -f $cache_file ]]; then
+		overlay_error "metadata cache is missing for $relative: metadata/md5-cache/$cache_relative"
+		status=1
+	fi
 done < <(find "$overlay_dir" -type f -name '*.ebuild' -print | sort)
 
 while IFS= read -r script_file; do
