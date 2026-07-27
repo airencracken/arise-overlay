@@ -9,6 +9,9 @@ if ! source "$overlay_dir/scripts/lib/error-handling.sh"; then
 fi
 
 status=0
+if ! "$overlay_dir/scripts/prepare-release_test.sh"; then
+	status=1
+fi
 for required in \
 	metadata/layout.conf \
 	profiles/repo_name \
