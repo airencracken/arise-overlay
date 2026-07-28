@@ -5,22 +5,18 @@ EAPI=8
 
 inherit bash-completion-r1 go-module
 
-DESCRIPTION="Live experimental high-performance package manager for Gentoo"
+DESCRIPTION="Experimental high-performance, recovery-oriented package manager for Gentoo"
 HOMEPAGE="https://github.com/airencracken/arise"
-
-if [[ ${PV} == 9999 ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/airencracken/arise.git"
-	EGIT_BRANCH="master"
-else
-	SRC_URI="
-		https://github.com/airencracken/arise/archive/v${PV}.tar.gz -> ${P}.tar.gz
-		https://github.com/airencracken/arise/releases/download/v${PV}/${P}-deps.tar.xz
-	"
-fi
+ARISE_COMMIT="a9c8f4e0c13777c65a1e1acd796e3a809b17a63c"
+SRC_URI="
+	https://github.com/airencracken/arise/archive/${ARISE_COMMIT}.tar.gz -> ${P}.tar.gz
+	https://github.com/airencracken/arise/releases/download/v${PV}/${P}-deps.tar.xz
+"
+S="${WORKDIR}/arise-${ARISE_COMMIT}"
 
 LICENSE="GPL-3 Apache-2.0 BSD BSD-2 BSD-3 MIT MPL-2.0"
 SLOT="0"
+KEYWORDS="~amd64"
 IUSE="info pie rsync test"
 
 RDEPEND="
@@ -42,12 +38,7 @@ BDEPEND="
 RESTRICT="!test? ( test )"
 
 src_unpack() {
-	if [[ ${PV} == 9999 ]]; then
-		git-r3_src_unpack
-		go-module_live_vendor
-	else
-		go-module_src_unpack
-	fi
+	go-module_src_unpack
 }
 
 src_compile() {
@@ -99,5 +90,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	elog "This is the live Arise ebuild. Keep Portage installed as the reference and recovery implementation."
+	elog "Arise is experimental; keep Portage installed as the reference and recovery implementation."
+	elog "Run 'arise sync' to synchronize repositories and publish the resolver index."
+	elog "Use 'arise --pretend <target>' to inspect a plan or 'arise install <target>' to execute it."
 }

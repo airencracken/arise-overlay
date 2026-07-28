@@ -82,7 +82,19 @@ if [[ $mode == --prepare-only ]]; then
 	exit 0
 fi
 
-if ! make -C "$overlay_dir" manifest VERSION="$version"; then
+dist_dir=${ARISE_RELEASE_DISTDIR:-/tmp/arise-overlay-distfiles-$version}
+portage_tmp=${ARISE_RELEASE_PORTAGE_TMPDIR:-/tmp/arise-overlay-portage-$version}
+for release_dir in "$dist_dir" "$portage_tmp"; do
+	case $release_dir in
+		/tmp/arise-*) ;;
+		*) fail "release working directory must be an absolute /tmp/arise-* path: $release_dir" ;;
+	esac
+	if ! mkdir -p -- "$release_dir"; then
+		fail "cannot create release working directory: $release_dir"
+	fi
+done
+
+if ! env DISTDIR="$dist_dir" ebuild --force "$target" manifest; then
 	fail "Manifest generation failed"
 fi
 
@@ -96,6 +108,19 @@ if ! egencache --repositories-configuration="$repositories_configuration" \
 fi
 if ! make -C "$overlay_dir" check; then
 	fail "overlay QA failed"
+fi
+
+portage_user=${PORTAGE_USERNAME:-$(id -un)} ||
+	fail "cannot determine Portage build user"
+portage_group=${PORTAGE_GRPNAME:-$(id -gn)} ||
+	fail "cannot determine Portage build group"
+if ! env \
+	PORTAGE_USERNAME="$portage_user" \
+	PORTAGE_GRPNAME="$portage_group" \
+	DISTDIR="$dist_dir" \
+	PORTAGE_TMPDIR="$portage_tmp" \
+	ebuild "$target" clean unpack compile test; then
+	fail "stable ebuild validation failed"
 fi
 
 printf 'Release metadata for arise %s is ready.\n' "$version"

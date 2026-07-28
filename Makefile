@@ -1,6 +1,6 @@
-VERSION ?= 0.0.5
+VERSION ?= 0.0.6
 REPO    ?= arise
-DISTDIR ?= /tmp/arise-overlay-distfiles
+DISTDIR ?= /tmp/arise-overlay-distfiles-$(VERSION)
 
 .PHONY: manifest release clean check check-go-version local-prepare local-build local-install local-clean
 
