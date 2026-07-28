@@ -12,6 +12,9 @@ status=0
 if ! "$overlay_dir/scripts/prepare-release_test.sh"; then
 	status=1
 fi
+if ! "$overlay_dir/scripts/check-release-pin_test.sh"; then
+	status=1
+fi
 for required in \
 	metadata/layout.conf \
 	profiles/repo_name \
