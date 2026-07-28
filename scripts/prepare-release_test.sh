@@ -13,8 +13,10 @@ check() {
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd) || exit 1
 fixture=$(mktemp -d /tmp/arise-overlay-release-test.XXXXXX) || exit 1
+release_dist=$(mktemp -d /tmp/arise-overlay-release-dist-test.XXXXXX) || exit 1
+release_tmp=$(mktemp -d /tmp/arise-overlay-release-portage-test.XXXXXX) || exit 1
 cleanup() {
-	rm -rf -- "$fixture"
+	rm -rf -- "$fixture" "$release_dist" "$release_tmp"
 }
 trap cleanup EXIT
 
@@ -36,5 +38,39 @@ if env ARISE_OVERLAY_DIR="$fixture" "$script_dir/prepare-release.sh" 0.0.4 "$com
 	printf 'prepare-release test failed: existing target was overwritten\n' >&2
 	failures=$((failures + 1))
 fi
+
+command_log="$fixture/release-commands.log"
+fake_bin="$fixture/fake-bin"
+mkdir -p "$fake_bin" || exit 1
+printf '%s\n' \
+	'#!/usr/bin/env bash' \
+	'printf "ebuild DISTDIR=%s PORTAGE_TMPDIR=%s PORTAGE_USERNAME=%s PORTAGE_GRPNAME=%s ARGS=%s\n" "$DISTDIR" "$PORTAGE_TMPDIR" "$PORTAGE_USERNAME" "$PORTAGE_GRPNAME" "$*" >>"$RELEASE_COMMAND_LOG"' \
+	>"$fake_bin/ebuild" || exit 1
+printf '%s\n' \
+	'#!/usr/bin/env bash' \
+	'printf "egencache ARGS=%s\n" "$*" >>"$RELEASE_COMMAND_LOG"' \
+	>"$fake_bin/egencache" || exit 1
+printf '%s\n' \
+	'#!/usr/bin/env bash' \
+	'printf "make ARGS=%s\n" "$*" >>"$RELEASE_COMMAND_LOG"' \
+	>"$fake_bin/make" || exit 1
+chmod 0755 "$fake_bin/ebuild" "$fake_bin/egencache" "$fake_bin/make" || exit 1
+
+check env \
+	ARISE_OVERLAY_DIR="$fixture" \
+	ARISE_RELEASE_DISTDIR="$release_dist" \
+	ARISE_RELEASE_PORTAGE_TMPDIR="$release_tmp" \
+	RELEASE_COMMAND_LOG="$command_log" \
+	PATH="$fake_bin:$PATH" \
+	"$script_dir/prepare-release.sh" 0.0.5 "$commit"
+check grep -Fq "ebuild DISTDIR=$release_dist PORTAGE_TMPDIR= PORTAGE_USERNAME= PORTAGE_GRPNAME= ARGS=--force $fixture/sys-apps/arise/arise-0.0.5.ebuild manifest" "$command_log"
+check grep -Fq "egencache ARGS=--repositories-configuration=" "$command_log"
+check grep -Fq "make ARGS=-C $fixture check" "$command_log"
+check grep -Fq "ebuild DISTDIR=$release_dist PORTAGE_TMPDIR=$release_tmp PORTAGE_USERNAME=" "$command_log"
+check grep -Fq "ARGS=$fixture/sys-apps/arise/arise-0.0.5.ebuild clean unpack compile test" "$command_log"
+check grep -Fq "env -i" \
+	"$script_dir/../sys-apps/arise/arise-9999.ebuild"
+check grep -Fq "GOPROXY=off" \
+	"$script_dir/../sys-apps/arise/arise-9999.ebuild"
 
 exit "$failures"
