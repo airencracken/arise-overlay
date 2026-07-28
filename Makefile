@@ -2,7 +2,7 @@ VERSION ?= 0.0.6
 REPO    ?= arise
 DISTDIR ?= /tmp/arise-overlay-distfiles-$(VERSION)
 
-.PHONY: manifest release clean check check-go-version local-prepare local-build local-install local-clean
+.PHONY: manifest release clean check check-go-version check-release-pin local-prepare local-build local-install local-clean
 
 ARISE_SOURCE_DIR ?= $(abspath ../arise)
 
@@ -15,6 +15,9 @@ check-go-version:
 		echo "Go version mismatch: go.mod requires $$GO_VERSION; update arise-9999.ebuild BDEPEND"; \
 		exit 1; \
 	}
+
+check-release-pin:
+	./scripts/check-release-pin.sh "$(VERSION)"
 
 local-prepare: check-go-version
 	ARISE_SOURCE_DIR="$(ARISE_SOURCE_DIR)" ./scripts/local-portage.sh prepare
