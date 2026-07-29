@@ -20,7 +20,8 @@ for required in \
 	profiles/repo_name \
 	sys-apps/arise/metadata.xml \
 	sys-apps/arise/arise-0.0.1.ebuild \
-	sys-apps/arise/arise-9999.ebuild; do
+	sys-apps/arise/arise-9999.ebuild \
+	scripts/templates/arise-vendor.ebuild.in; do
 	if [[ ! -f $overlay_dir/$required ]]; then
 		overlay_error "required overlay file is missing: $required"
 		status=1
