@@ -34,7 +34,8 @@ target=$package_dir/arise-$version.ebuild
 template=
 while IFS= read -r candidate; do
 	template=$candidate
-done < <(find "$package_dir" -maxdepth 1 -type f -name 'arise-[0-9]*.ebuild' -print | sort -V)
+done < <(find "$package_dir" -maxdepth 1 -type f -name 'arise-[0-9]*.ebuild' \
+	! -name 'arise-9999.ebuild' -print | sort -V)
 [[ -n $template ]] || fail "no stable versioned ebuild is available as a template"
 
 target_tmp=$(mktemp "$package_dir/.arise-$version.ebuild.XXXXXX") ||

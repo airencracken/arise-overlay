@@ -24,11 +24,17 @@ mkdir -p "$fixture/sys-apps/arise" || exit 1
 printf 'VERSION ?= 0.0.3\n' >"$fixture/Makefile" || exit 1
 printf 'EAPI=8\nARISE_COMMIT="%040d"\nSRC_URI="https://example.invalid/${ARISE_COMMIT}"\n' 0 \
 	>"$fixture/sys-apps/arise/arise-0.0.3.ebuild" || exit 1
+printf 'EAPI=8\ninherit git-r3\nEGIT_BRANCH="master"\n' \
+	>"$fixture/sys-apps/arise/arise-9999.ebuild" || exit 1
 
 commit=1111111111111111111111111111111111111111
 check env ARISE_OVERLAY_DIR="$fixture" "$script_dir/prepare-release.sh" 0.0.4 "$commit" --prepare-only
 check grep -qx "ARISE_COMMIT=\"$commit\"" "$fixture/sys-apps/arise/arise-0.0.4.ebuild"
 check grep -qx 'VERSION ?= 0.0.4' "$fixture/Makefile"
+if grep -q 'EGIT_BRANCH' "$fixture/sys-apps/arise/arise-0.0.4.ebuild"; then
+	printf 'prepare-release test failed: live ebuild was used as the release template\n' >&2
+	failures=$((failures + 1))
+fi
 
 if env ARISE_OVERLAY_DIR="$fixture" "$script_dir/prepare-release.sh" bad "$commit" --prepare-only >/dev/null 2>&1; then
 	printf 'prepare-release test failed: invalid version was accepted\n' >&2
