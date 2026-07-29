@@ -7,7 +7,7 @@ inherit shell-completion go-module
 
 DESCRIPTION="Experimental high-performance, recovery-oriented package manager for Gentoo"
 HOMEPAGE="https://github.com/airencracken/arise"
-ARISE_COMMIT="d5f4f6360337eb7ddaba7565efdaa89bc387d909"
+ARISE_COMMIT="79fe551b00fa9ea8b8281c5941f45efee61a2f47"
 SRC_URI="
 	https://github.com/airencracken/arise/archive/${ARISE_COMMIT}.tar.gz -> ${P}.tar.gz
 	https://github.com/airencracken/arise/releases/download/v${PV}/${P}-deps.tar.xz
@@ -70,7 +70,15 @@ src_compile() {
 }
 
 src_test() {
-	ego test ./... -timeout 120s
+	mkdir -p "${T}/test-home" || die "could not create isolated test home"
+	env -i \
+		GOCACHE="${GOCACHE}" \
+		GOMODCACHE="${GOMODCACHE}" \
+		GOPROXY=off \
+		HOME="${T}/test-home" \
+		PATH="${PATH}" \
+		TMPDIR="${T}" \
+		go test ./... -timeout 120s
 }
 
 src_install() {

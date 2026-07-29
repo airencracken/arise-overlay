@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit bash-completion-r1 go-module
+inherit shell-completion go-module
 
 DESCRIPTION="Experimental high-performance, recovery-oriented package manager for Gentoo"
 HOMEPAGE="https://github.com/airencracken/arise"
@@ -12,7 +12,7 @@ SRC_URI="
 	https://github.com/airencracken/arise/releases/download/v${PV}/${P}-deps.tar.xz
 "
 
-LICENSE="GPL-3 Apache-2.0 BSD BSD-2 BSD-3 MIT MPL-2.0"
+LICENSE="GPL-3 Apache-2.0 BSD BSD-2 MIT MPL-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="info pie rsync test"
