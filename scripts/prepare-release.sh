@@ -31,12 +31,8 @@ package_dir=$overlay_dir/sys-apps/arise
 target=$package_dir/arise-$version.ebuild
 [[ ! -e $target ]] || fail "target already exists: $target"
 
-template=
-while IFS= read -r candidate; do
-	template=$candidate
-done < <(find "$package_dir" -maxdepth 1 -type f -name 'arise-[0-9]*.ebuild' \
-	! -name 'arise-9999.ebuild' -print | sort -V)
-[[ -n $template ]] || fail "no stable versioned ebuild is available as a template"
+template=$overlay_dir/scripts/templates/arise-vendor.ebuild.in
+[[ -f $template ]] || fail "vendor release template is missing: $template"
 
 target_tmp=$(mktemp "$package_dir/.arise-$version.ebuild.XXXXXX") ||
 	fail "cannot create temporary ebuild"
@@ -48,13 +44,12 @@ cleanup() {
 trap cleanup EXIT
 
 if ! awk -v commit="$commit" '
-	/^ARISE_COMMIT=/ { print "ARISE_COMMIT=\"" commit "\""; next }
-	{ print }
+	{ gsub(/@ARISE_COMMIT@/, commit); print }
 ' "$template" >"$target_tmp"; then
 	fail "cannot render versioned ebuild"
 fi
 if ! grep -q "^ARISE_COMMIT=\"$commit\"$" "$target_tmp"; then
-	fail "template does not contain an ARISE_COMMIT assignment"
+	fail "template did not render the ARISE_COMMIT assignment"
 fi
 if ! chmod 0644 "$target_tmp" || ! mv -- "$target_tmp" "$target"; then
 	fail "cannot publish versioned ebuild"

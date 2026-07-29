@@ -20,16 +20,20 @@ cleanup() {
 }
 trap cleanup EXIT
 
-mkdir -p "$fixture/sys-apps/arise" || exit 1
+mkdir -p "$fixture/sys-apps/arise" "$fixture/scripts/templates" || exit 1
 printf 'VERSION ?= 0.0.3\n' >"$fixture/Makefile" || exit 1
 printf 'EAPI=8\nARISE_COMMIT="%040d"\nSRC_URI="https://example.invalid/${ARISE_COMMIT}"\n' 0 \
 	>"$fixture/sys-apps/arise/arise-0.0.3.ebuild" || exit 1
 printf 'EAPI=8\ninherit git-r3\nEGIT_BRANCH="master"\n' \
 	>"$fixture/sys-apps/arise/arise-9999.ebuild" || exit 1
+printf 'EAPI=8\nARISE_COMMIT="@ARISE_COMMIT@"\nSRC_URI="https://example.invalid/${P}-vendor.tar.xz"\nGOPROXY=off ego build -mod=vendor\n' \
+	>"$fixture/scripts/templates/arise-vendor.ebuild.in" || exit 1
 
 commit=1111111111111111111111111111111111111111
 check env ARISE_OVERLAY_DIR="$fixture" "$script_dir/prepare-release.sh" 0.0.4 "$commit" --prepare-only
 check grep -qx "ARISE_COMMIT=\"$commit\"" "$fixture/sys-apps/arise/arise-0.0.4.ebuild"
+check grep -Fq '${P}-vendor.tar.xz' "$fixture/sys-apps/arise/arise-0.0.4.ebuild"
+check grep -Fq -- '-mod=vendor' "$fixture/sys-apps/arise/arise-0.0.4.ebuild"
 check grep -qx 'VERSION ?= 0.0.4' "$fixture/Makefile"
 if grep -q 'EGIT_BRANCH' "$fixture/sys-apps/arise/arise-0.0.4.ebuild"; then
 	printf 'prepare-release test failed: live ebuild was used as the release template\n' >&2
@@ -78,5 +82,9 @@ check grep -Fq "env -i" \
 	"$script_dir/../sys-apps/arise/arise-9999.ebuild"
 check grep -Fq "GOPROXY=off" \
 	"$script_dir/../sys-apps/arise/arise-9999.ebuild"
+check grep -Fq "arise-overlay-assets/releases/download" \
+	"$script_dir/templates/arise-vendor.ebuild.in"
+check grep -Fq "arise-vendor-manifest" \
+	"$script_dir/templates/arise-vendor.ebuild.in"
 
 exit "$failures"
