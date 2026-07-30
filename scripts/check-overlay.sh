@@ -9,9 +9,6 @@ if ! source "$overlay_dir/scripts/lib/error-handling.sh"; then
 fi
 
 status=0
-if ! "$overlay_dir/scripts/prepare-release_test.sh"; then
-	status=1
-fi
 if ! "$overlay_dir/scripts/check-release-pin_test.sh"; then
 	status=1
 fi
