@@ -2,7 +2,7 @@ VERSION ?= 0.0.9
 REPO    ?= arise
 DISTDIR ?= /tmp/arise-overlay-distfiles-$(VERSION)
 
-.PHONY: manifest release clean check check-go-version check-release-pin local-prepare local-build local-install local-clean
+.PHONY: manifest clean check check-go-version check-release-pin local-prepare local-build local-install local-clean
 
 ARISE_SOURCE_DIR ?= $(abspath ../arise)
 
@@ -38,12 +38,6 @@ manifest:
 	DISTDIR="$(DISTDIR)" ebuild \
 		sys-apps/$(REPO)/arise-$(VERSION).ebuild manifest
 	@echo "Manifest updated through Portage."
-
-release: manifest
-	@echo "Ready to release arise v$(VERSION)"
-	@echo "  1. git add sys-apps/$(REPO)/Manifest sys-apps/$(REPO)/arise-$(VERSION).ebuild"
-	@echo "  2. git commit -m 'release v$(VERSION)'"
-	@echo "  3. git push"
 
 clean:
 	@case "$(notdir $(DISTDIR))" in \

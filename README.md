@@ -70,25 +70,20 @@ make local-build ARISE_SOURCE_DIR=/path/to/arise
 state without merging it. `make local-install` is the explicit live-system
 mutation step. See `LOCAL_DEVELOPMENT.md`.
 
-After publishing an immutable source release, prepare its overlay entry with
-the full tagged commit:
+Cross-repository releases are prepared, verified, and published by the
+dedicated [arise-release](https://github.com/airencracken/arise-release)
+manager:
 
 ```bash
-scripts/prepare-release.sh 0.0.4 5a9f219403533bd43146dbecaf4dafa9edd52f3e
+arise-release prepare 0.0.10
+arise-release verify 0.0.10
+arise-release publish 0.0.10
 ```
 
-The script validates its inputs, atomically creates the pinned ebuild from the
-maintained vendor template, updates the Makefile default, regenerates the Manifest
-and metadata cache, and runs overlay QA. Use `--prepare-only` as the third
-argument only when intentionally deferring derived metadata generation.
-
-Release order:
-
-1. test, tag, and publish the corresponding Arise source release;
-2. publish its vendor archive in `arise-overlay-assets`;
-3. add the versioned ebuild and generate its Manifest through Portage;
-4. pass local checks, `pkgcheck`, and an offline package build;
-5. commit and push the overlay release.
+This repository retains the ebuild template, Manifest generation, metadata
+cache, package QA, and local Portage build primitives that intrinsically
+belong to the overlay. It does not tag, publish, upload assets, or coordinate
+other repositories.
 
 Published tags and dependency archives are immutable. Fix a bad release with a
 new patch version rather than replacing its inputs.
