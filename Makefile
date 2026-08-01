@@ -1,4 +1,4 @@
-VERSION ?= 0.0.18
+VERSION ?= 0.0.19
 REPO    ?= arise
 DISTDIR ?= /tmp/arise-overlay-distfiles-$(VERSION)
 
