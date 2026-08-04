@@ -13,16 +13,22 @@ eselect repository add arise-overlay git \
   https://github.com/airencracken/arise-overlay.git
 emaint sync -r arise-overlay
 mkdir -p /etc/portage/package.accept_keywords
-printf '%s\n' 'sys-apps/arise ~amd64' \
+printf '%s\n' 'sys-apps/arise-bin ~amd64' \
   >> /etc/portage/package.accept_keywords/arise
-emerge --ask sys-apps/arise
+emerge --ask sys-apps/arise-bin
 ```
 
 The release is intentionally testing-keyworded. Do not use `ACCEPT_KEYWORDS` on
 the command line for the whole dependency transaction; scope the exception to
-`sys-apps/arise` as shown above.
+`sys-apps/arise-bin` as shown above. The binary package avoids installing Go
+and avoids compiling Arise on the new system.
 
-The versioned ebuild uses two immutable inputs: the tagged source archive and a
+To build Arise locally instead, keyword and emerge `sys-apps/arise`. The source
+package supports the optional `pie` USE flag; the bootstrap binary is the
+static recovery-oriented release artifact. The packages are mutually
+exclusive because both install `/usr/bin/arise`.
+
+The versioned source ebuild uses two immutable inputs: the tagged source archive and a
 vendor archive from `arise-overlay-assets`. Portage fetches both, the ebuild
 verifies vendor provenance, and the Go compile and test phases run with
 `GOPROXY=off`. The initial emerge may still install the ebuild's declared build
