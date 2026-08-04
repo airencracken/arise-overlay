@@ -29,6 +29,10 @@ Then install:
 emerge --ask sys-apps/arise
 ```
 
+For a minimal, newly unpacked stage3, use the tested
+[bootstrap handoff](BOOTSTRAP.md). It documents the testing keyword, the exact
+Portage boundary, and the first Arise commands.
+
 The versioned package builds without network access using a small,
 release-bound vendor archive from
 [`arise-overlay-assets`](https://github.com/airencracken/arise-overlay-assets).
@@ -80,10 +84,10 @@ arise-release verify 0.0.10
 arise-release publish 0.0.10
 ```
 
-This repository retains the ebuild template, Manifest generation, metadata
-cache, package QA, and local Portage build primitives that intrinsically
-belong to the overlay. It does not tag, publish, upload assets, or coordinate
-other repositories.
+This repository retains Manifest generation, metadata cache, package QA, and
+local Portage build primitives that intrinsically belong to the overlay. The
+release manager owns the versioned ebuild template as well as tagging,
+publishing, asset uploads, and cross-repository coordination.
 
 Published tags and dependency archives are immutable. Fix a bad release with a
 new patch version rather than replacing its inputs.

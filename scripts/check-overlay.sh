@@ -9,16 +9,16 @@ if ! source "$overlay_dir/scripts/lib/error-handling.sh"; then
 fi
 
 status=0
-if ! "$overlay_dir/scripts/check-release-pin_test.sh"; then
+if ! "$overlay_dir/scripts/bootstrap-contract_test.sh"; then
 	status=1
 fi
 for required in \
+	BOOTSTRAP.md \
 	metadata/layout.conf \
 	profiles/repo_name \
 	sys-apps/arise/metadata.xml \
 	sys-apps/arise/arise-0.0.1.ebuild \
-	sys-apps/arise/arise-9999.ebuild \
-	scripts/templates/arise-vendor.ebuild.in; do
+	sys-apps/arise/arise-9999.ebuild; do
 	if [[ ! -f $overlay_dir/$required ]]; then
 		overlay_error "required overlay file is missing: $required"
 		status=1
