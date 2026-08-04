@@ -26,14 +26,20 @@ auto-sync = yes
 Then install:
 
 ```bash
-emerge --ask sys-apps/arise
+emerge --ask sys-apps/arise-bin
 ```
+
+`sys-apps/arise-bin` is the fast bootstrap path. It installs the official
+statically linked release bundle without installing Go or compiling Arise.
+Use `sys-apps/arise` instead when you want a local source build or the optional
+`pie` build mode. The two packages install the same command and are mutually
+exclusive.
 
 For a minimal, newly unpacked stage3, use the tested
 [bootstrap handoff](BOOTSTRAP.md). It documents the testing keyword, the exact
 Portage boundary, and the first Arise commands.
 
-The versioned package builds without network access using a small,
+The versioned source package builds without network access using a small,
 release-bound vendor archive from
 [`arise-overlay-assets`](https://github.com/airencracken/arise-overlay-assets).
 The ebuild verifies the archive's provenance manifest against its source
@@ -55,7 +61,12 @@ The default binary is statically linked. The ebuild explicitly selects Go's
 executable build mode instead of Gentoo's normal PIE default, keeping the Arise
 recovery control plane independent of the host dynamic loader and
 shared-library state. Users who prefer Gentoo's normal hardening tradeoff can
-enable `pie`. The man page and Bash completion are always installed.
+enable `pie` on `sys-apps/arise`. The `arise-bin` release artifact is static by
+design. Both packages install the man page and Bash completion.
+
+The binary release format, provenance manifest, architecture policy, and
+publication gates are maintained in
+[`BINARY_RELEASE_CONTRACT.md`](BINARY_RELEASE_CONTRACT.md).
 
 See `USE_FLAGS.md` for the longer-term capability policy.
 Core archive formats currently use the system `tar`, `xz`, and `bzip2` tools;
@@ -67,6 +78,7 @@ runtime dependencies, not optional format USE flags.
 ```bash
 make check
 make manifest VERSION=0.0.1
+make manifest PACKAGE=arise-bin VERSION=0.0.23
 make local-build ARISE_SOURCE_DIR=/path/to/arise
 ```
 

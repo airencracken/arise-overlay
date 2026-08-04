@@ -16,8 +16,9 @@ fi
 for required in \
 	'emerge --oneshot dev-vcs/git app-eselect/eselect-repository' \
 	'emaint sync -r arise-overlay' \
-	'sys-apps/arise ~amd64' \
-	'emerge --ask sys-apps/arise' \
+	'sys-apps/arise-bin ~amd64' \
+	'emerge --ask sys-apps/arise-bin' \
+	'avoids installing Go' \
 	'arise sync' \
 	'--with-bdeps=y' \
 	'Keep Portage installed'; do

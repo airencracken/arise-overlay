@@ -1,5 +1,5 @@
 VERSION ?= 0.0.22
-REPO    ?= arise
+PACKAGE ?= arise
 DISTDIR ?= /tmp/arise-overlay-distfiles-$(VERSION)
 
 .PHONY: manifest clean check check-go-version local-prepare local-build local-install local-clean
@@ -29,11 +29,11 @@ local-clean:
 	./scripts/local-portage.sh clean
 
 manifest:
-	@test -f sys-apps/$(REPO)/arise-$(VERSION).ebuild || { \
-		echo "Missing sys-apps/$(REPO)/arise-$(VERSION).ebuild"; exit 1; }
+	@test -f sys-apps/$(PACKAGE)/$(PACKAGE)-$(VERSION).ebuild || { \
+		echo "Missing sys-apps/$(PACKAGE)/$(PACKAGE)-$(VERSION).ebuild"; exit 1; }
 	mkdir -p "$(DISTDIR)"
 	DISTDIR="$(DISTDIR)" ebuild \
-		sys-apps/$(REPO)/arise-$(VERSION).ebuild manifest
+		sys-apps/$(PACKAGE)/$(PACKAGE)-$(VERSION).ebuild manifest
 	@echo "Manifest updated through Portage."
 
 clean:

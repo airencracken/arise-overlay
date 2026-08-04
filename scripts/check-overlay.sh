@@ -12,11 +12,16 @@ status=0
 if ! "$overlay_dir/scripts/bootstrap-contract_test.sh"; then
 	status=1
 fi
+if ! "$overlay_dir/scripts/arise-bin-contract_test.sh"; then
+	status=1
+fi
 for required in \
 	BOOTSTRAP.md \
 	metadata/layout.conf \
 	profiles/repo_name \
 	sys-apps/arise/metadata.xml \
+	sys-apps/arise-bin/metadata.xml \
+	sys-apps/arise-bin/arise-bin-0.0.23.ebuild \
 	sys-apps/arise/arise-0.0.1.ebuild \
 	sys-apps/arise/arise-9999.ebuild; do
 	if [[ ! -f $overlay_dir/$required ]]; then
@@ -48,6 +53,9 @@ done < <(find "$overlay_dir/scripts" -type f -name '*.sh' -print | sort)
 
 if overlay_have_command xmllint; then
 	if ! xmllint --noout "$overlay_dir/sys-apps/arise/metadata.xml"; then
+		status=1
+	fi
+	if ! xmllint --noout "$overlay_dir/sys-apps/arise-bin/metadata.xml"; then
 		status=1
 	fi
 else
