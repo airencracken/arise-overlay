@@ -10,5 +10,5 @@ RDEPEND=!sys-apps/arise app-arch/bzip2 app-arch/tar app-arch/xz-utils app-shells
 RESTRICT=strip
 SLOT=0
 SRC_URI=amd64? ( https://github.com/airencracken/arise/releases/download/v0.0.23/arise-bin-0.0.23-linux-amd64.tar.xz )
-_eclasses_=shell-completion	63a62de3ca49c798ee6e89f190e45d0e
-_md5_=46386fd4dd5ce074cbde82c9e613ac31
+_eclasses_=shell-completion	63a62de3ca49c798ee6e89f190e45d0e	toolchain-funcs	58a918e3a42d0156f010dcfd43725be5
+_md5_=c7fde942a1cff30a6a3a074fcf1a1363
