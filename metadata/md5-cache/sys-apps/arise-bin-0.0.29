@@ -1,0 +1,14 @@
+BDEPEND=sys-apps/file
+DEFINED_PHASES=install postinst prepare
+DESCRIPTION=Prebuilt static Arise package manager for Gentoo
+EAPI=8
+HOMEPAGE=https://github.com/airencracken/arise
+INHERIT=shell-completion
+KEYWORDS=~amd64
+LICENSE=GPL-3 Apache-2.0 BSD BSD-2 MIT MPL-2.0
+RDEPEND=!sys-apps/arise app-arch/bzip2 app-arch/tar app-arch/xz-utils app-shells/bash sys-apps/portage sys-apps/sandbox sys-apps/util-linux
+RESTRICT=strip
+SLOT=0
+SRC_URI=amd64? ( https://github.com/airencracken/arise/releases/download/v0.0.29/arise-bin-0.0.29-linux-amd64.tar.xz )
+_eclasses_=shell-completion	63a62de3ca49c798ee6e89f190e45d0e	toolchain-funcs	58a918e3a42d0156f010dcfd43725be5
+_md5_=c7fde942a1cff30a6a3a074fcf1a1363
