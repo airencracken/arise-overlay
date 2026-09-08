@@ -1,4 +1,4 @@
-VERSION ?= 0.0.30
+VERSION ?= 0.0.31
 PACKAGE ?= arise
 DISTDIR ?= /tmp/arise-overlay-distfiles-$(VERSION)
 
