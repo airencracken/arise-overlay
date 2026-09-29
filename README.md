@@ -1,5 +1,11 @@
 # Arise Gentoo overlay
 
+The overlay retains the current release, one previous release for explicit
+fallback, and the live source ebuild. Older artifacts remain available on
+GitHub. Contract checks follow the current Makefile version and test phases
+abort when Go tests fail. The fallback intentionally retains a redundant
+keyworded version for recovery.
+
 This is the maintained Gentoo packaging repository for
 [Arise](https://github.com/airencracken/arise).
 

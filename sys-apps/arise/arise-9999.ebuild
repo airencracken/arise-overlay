@@ -87,7 +87,7 @@ src_test() {
 		HOME="${T}/test-home" \
 		PATH="${PATH}" \
 		TMPDIR="${T}" \
-		go test ./... -timeout 120s
+		go test ./... -timeout 120s || die "Go tests failed"
 }
 
 src_install() {

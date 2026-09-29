@@ -3,7 +3,8 @@
 # Validate the staged binary package contract without fetching unpublished assets.
 
 overlay_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd) || exit 1
-ebuild=$overlay_dir/sys-apps/arise-bin/arise-bin-0.0.23.ebuild
+version=$(awk '$1 == "VERSION" && $2 == "?=" { print $3; exit }' "$overlay_dir/Makefile")
+ebuild=$overlay_dir/sys-apps/arise-bin/arise-bin-${version}.ebuild
 metadata=$overlay_dir/sys-apps/arise-bin/metadata.xml
 contract=$overlay_dir/BINARY_RELEASE_CONTRACT.md
 makefile=$overlay_dir/Makefile
