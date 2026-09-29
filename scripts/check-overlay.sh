@@ -15,14 +15,18 @@ fi
 if ! "$overlay_dir/scripts/arise-bin-contract_test.sh"; then
 	status=1
 fi
+if ! bash "$overlay_dir/scripts/test-phase-contract.sh"; then
+	status=1
+fi
+version=$(awk '$1 == "VERSION" && $2 == "?=" { print $3; exit }' "$overlay_dir/Makefile")
 for required in \
 	BOOTSTRAP.md \
 	metadata/layout.conf \
 	profiles/repo_name \
 	sys-apps/arise/metadata.xml \
 	sys-apps/arise-bin/metadata.xml \
-	sys-apps/arise-bin/arise-bin-0.0.23.ebuild \
-	sys-apps/arise/arise-0.0.1.ebuild \
+	"sys-apps/arise-bin/arise-bin-${version}.ebuild" \
+	"sys-apps/arise/arise-${version}.ebuild" \
 	sys-apps/arise/arise-9999.ebuild; do
 	if [[ ! -f $overlay_dir/$required ]]; then
 		overlay_error "required overlay file is missing: $required"
