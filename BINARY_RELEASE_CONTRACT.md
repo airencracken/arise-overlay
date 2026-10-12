@@ -70,6 +70,12 @@ same final commit and version:
 4. release ledger and checksums;
 5. live fresh-stage3 validation evidence.
 
+For 0.0.42, the maintainer explicitly deferred the full fresh-stage3 gate and
+authorized publication to the existing experimental `~amd64` overlay. The
+release retains ordinary regression, offline artifact and ebuild validation;
+it does not claim a clean-image update, interruption/resume or reboot pass.
+Future acceptance uses a disposable guest with normal UID/GID ownership.
+
 Before publication, test a clean binary install, source-to-binary and
 binary-to-source replacement, `arise --version`, `arise --pretend`, repository
 sync, JSON output, and one real package transaction. A failed validation must
