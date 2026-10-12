@@ -6,7 +6,7 @@ inherit shell-completion go-module
 
 DESCRIPTION="Experimental high-performance, recovery-oriented package manager for Gentoo"
 HOMEPAGE="https://github.com/airencracken/arise"
-ARISE_COMMIT="3a1ab2af24f766edca712b852ce8e9d9a1e8e53d"
+ARISE_COMMIT="c83d1ac7c240de247a2aea0a95347dd0c399083e"
 SRC_URI="
 	https://github.com/airencracken/arise/archive/${ARISE_COMMIT}.tar.gz -> ${P}.tar.gz
 	https://github.com/airencracken/arise-overlay-assets/releases/download/v${PV}/${P}-vendor.tar.xz
